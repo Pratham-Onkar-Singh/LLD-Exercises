@@ -1,6 +1,6 @@
 import java.util.*;
 
-class StudentDataValidater {
+public class StudentDataValidater {
 
   public List<String> validate(Map<String, String> studentData) {
     // Extracting data:

@@ -2,9 +2,9 @@
 import java.util.List;
 
 public class InfoDisplay {
-  public void displaySuccess(FakeDb db, StudentRecord studentRecord) {
+  public void displaySuccess(StudentRecord studentRecord, int totalCount) {
     System.out.println("OK: created student " + studentRecord.id);
-    System.out.println("Saved. Total students: " + db.count());
+    System.out.println("Saved. Total students: " + totalCount);
     System.out.println("CONFIRMATION:");
     System.out.println(studentRecord);
   }

@@ -1,13 +1,13 @@
 import java.util.*;
 
 public class OnboardingService {
-    private final FakeDb db;
+    private final StudentStore store;
     private final DataParser dataParser;
     private final StudentDataValidater studentDataValidater;
     private final InfoDisplay infoDisplay;
 
-    public OnboardingService(FakeDb db) { 
-        this.db = db; 
+    public OnboardingService(StudentStore store) {
+        this.store = store; 
         this.dataParser = new DataParser();
         this.studentDataValidater = new StudentDataValidater();
         this.infoDisplay = new InfoDisplay();
@@ -49,13 +49,13 @@ public class OnboardingService {
         }
 
         // Genrating Student Id and student record
-        String id = IdUtil.nextStudentId(db.count());
+        String id = IdUtil.nextStudentId(store.count());
         StudentRecord studentRecord = new StudentRecord(id, studentData.get("name"), studentData.get("email"), studentData.get("phone"), studentData.get("program"));
 
         // Saving to FakeDB
-        db.save(studentRecord);
+        store.save(studentRecord);
 
         // Printing information
-        infoDisplay.displaySuccess(db, studentRecord);
+        infoDisplay.displaySuccess(studentRecord, store.count());
     }
 }
