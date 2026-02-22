@@ -2,46 +2,60 @@ import java.util.*;
 
 public class OnboardingService {
     private final FakeDb db;
+    private final DataParser dataParser;
+    private final StudentDataValidater studentDataValidater;
+    private final InfoDisplay infoDisplay;
 
-    public OnboardingService(FakeDb db) { this.db = db; }
+    public OnboardingService(FakeDb db) { 
+        this.db = db; 
+        this.dataParser = new DataParser();
+        this.studentDataValidater = new StudentDataValidater();
+        this.infoDisplay = new InfoDisplay();
+    }
 
     // Intentionally violates SRP: parses + validates + creates ID + saves + prints.
     public void registerFromRawInput(String raw) {
         System.out.println("INPUT: " + raw);
 
-        Map<String,String> kv = new LinkedHashMap<>();
-        String[] parts = raw.split(";");
-        for (String p : parts) {
-            String[] t = p.split("=", 2);
-            if (t.length == 2) kv.put(t[0].trim(), t[1].trim());
-        }
+        // Parsing of data (BEFORE):
+        // Map<String,String> kv = new LinkedHashMap<>();
+        // String[] parts = raw.split(";");
+        // for (String p : parts) {
+        //     String[] t = p.split("=", 2);
+        //     if (t.length == 2) kv.put(t[0].trim(), t[1].trim());
+        // }
+        // AFTER IMPLEMENTING SRP:
+        Map<String, String> studentData = this.dataParser.getParsedStudentData(raw);
 
-        String name = kv.getOrDefault("name", "");
-        String email = kv.getOrDefault("email", "");
-        String phone = kv.getOrDefault("phone", "");
-        String program = kv.getOrDefault("program", "");
 
-        // validation inline, printing inline
-        List<String> errors = new ArrayList<>();
-        if (name.isBlank()) errors.add("name is required");
-        if (email.isBlank() || !email.contains("@")) errors.add("email is invalid");
-        if (phone.isBlank() || !phone.chars().allMatch(Character::isDigit)) errors.add("phone is invalid");
-        if (!(program.equals("CSE") || program.equals("AI") || program.equals("SWE"))) errors.add("program is invalid");
+        // Extracting all the fields from the raw string and
+        //  validation inline, printing inline (BEFORE):
+        // String name = kv.getOrDefault("name", "");
+        // String email = kv.getOrDefault("email", "");
+        // String phone = kv.getOrDefault("phone", "");
+        // String program = kv.getOrDefault("program", "");
 
+        // List<String> errors = new ArrayList<>();
+        // if (name.trim().isEmpty()) errors.add("name is required");
+        // if (email.trim().isEmpty() || !email.contains("@")) errors.add("email is invalid");
+        // if (phone.trim().isEmpty() || !phone.chars().allMatch(Character::isDigit)) errors.add("phone is invalid");
+        // if (!(program.equals("CSE") || program.equals("AI") || program.equals("SWE"))) errors.add("program is invalid");
+        List<String> errors = studentDataValidater.validate(studentData);
+
+        // Error handling
         if (!errors.isEmpty()) {
-            System.out.println("ERROR: cannot register");
-            for (String e : errors) System.out.println("- " + e);
+            infoDisplay.displayError(errors);
             return;
         }
 
+        // Genrating Student Id and student record
         String id = IdUtil.nextStudentId(db.count());
-        StudentRecord rec = new StudentRecord(id, name, email, phone, program);
+        StudentRecord studentRecord = new StudentRecord(id, studentData.get("name"), studentData.get("email"), studentData.get("phone"), studentData.get("program"));
 
-        db.save(rec);
+        // Saving to FakeDB
+        db.save(studentRecord);
 
-        System.out.println("OK: created student " + id);
-        System.out.println("Saved. Total students: " + db.count());
-        System.out.println("CONFIRMATION:");
-        System.out.println(rec);
+        // Printing information
+        infoDisplay.displaySuccess(db, studentRecord);
     }
 }
