@@ -1,3 +1,7 @@
+// public interface AddOn {
+//     double getPrice();
+// }
+
 public enum AddOn {
-    MESS, LAUNDRY, GYM
+  LAUNDRY, MESS, GYM;
 }
