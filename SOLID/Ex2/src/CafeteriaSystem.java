@@ -25,9 +25,8 @@ public class CafeteriaSystem {
         double discount = discountRules.discountAmount(subtotal, lines.size());
         
         // Calculate total
-        double total = subtotal + tax - discount;
+        double total = OrderManagment.getTotal(subtotal, tax, discount);
 
-        
         // Get invoice Id and Specifying invoice format
         String invId = InvoiceIdGenerator.getNextInvoiceId();
         String invoice = InvoiceFormatter.getInvoice(invId, lines, menu, subtotal, taxPct, tax, discount, total);

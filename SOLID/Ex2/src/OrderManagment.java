@@ -13,4 +13,8 @@ public class OrderManagment {
 
     return subtotal;
   }
+
+  public static double getTotal(double subtotal, double tax, double discount) {
+    return subtotal + tax - discount;
+  }
 }
