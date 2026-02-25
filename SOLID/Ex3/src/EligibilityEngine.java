@@ -3,16 +3,17 @@ import java.util.*;
 public class EligibilityEngine {
     private final FakeEligibilityStore store;
     private final List<EligibilityRule> rules;
+    private final Printer printer;
 
-    public EligibilityEngine(FakeEligibilityStore store, List<EligibilityRule> rules) { 
+    public EligibilityEngine(FakeEligibilityStore store, List<EligibilityRule> rules, Printer printer) { 
         this.store = store; 
         this.rules = rules;
+        this.printer = printer;
     }
 
     public void runAndPrint(StudentProfile s) {
-        ReportPrinter p = new ReportPrinter();
         EligibilityEngineResult r = evaluate(s);
-        p.print(s, r);
+        printer.print(s, r);
         store.save(s.rollNo, r.status);
     }
 

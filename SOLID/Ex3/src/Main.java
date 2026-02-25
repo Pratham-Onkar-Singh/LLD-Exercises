@@ -11,7 +11,10 @@ public class Main {
         rules.add(new CGREligibilityRule(8.0));
         rules.add(new AttendanceEligibilityRule(75));
         rules.add(new CreditsEligibilityRule(20));
-        EligibilityEngine engine = new EligibilityEngine(new FakeEligibilityStore(), rules);
+
+        Printer printer = new ReportPrinter();
+
+        EligibilityEngine engine = new EligibilityEngine(new FakeEligibilityStore(), rules, printer);
         engine.runAndPrint(s);
     }
 }
